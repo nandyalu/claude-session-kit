@@ -1,0 +1,56 @@
+{
+  "name": "claude-usage-bar",
+  "displayName": "Claude usage bar",
+  "description": "Shows the token, prompt cache, cost and graft figures of the live Claude Code sessions on this machine in the status bar, with a details pane for all of them.",
+  "version": "1.0.0",
+  "publisher": "local",
+  "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nandyalu/claude-session-kit"
+  },
+  "engines": {
+    "vscode": "^1.94.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "extensionKind": [
+    "workspace"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "files": [
+    "extension.js",
+    "package.json",
+    "README.md"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "claudeUsageBar.showDetails",
+        "title": "Claude usage: show sessions"
+      }
+    ],
+    "configuration": {
+      "title": "Claude usage bar",
+      "properties": {
+        "claudeUsageBar.warnTokens": {
+          "type": "number",
+          "default": 500000,
+          "minimum": 1000,
+          "description": "Context size in tokens at which the status bar item turns to the warning color."
+        },
+        "claudeUsageBar.alertTokens": {
+          "type": "number",
+          "default": 750000,
+          "minimum": 1000,
+          "description": "Context size in tokens at which the status bar item turns to the error color. Keep it above claudeUsageBar.warnTokens."
+        }
+      }
+    }
+  }
+}

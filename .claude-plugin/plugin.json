@@ -1,0 +1,8 @@
+{
+  "name": "kit",
+  "description": "A session kit for Claude Code: the handoff skill that moves a long session to a fresh one, a hook that records the token and cache figures of each session for the VS Code usage bar, and a hook that says when a session is large.",
+  "version": "1.0.0",
+  "author": {
+    "name": "nandyalu"
+  }
+}

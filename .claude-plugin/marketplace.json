@@ -1,0 +1,14 @@
+{
+  "name": "nandyalu",
+  "description": "Plugins by nandyalu. One so far: kit, for long Claude Code sessions.",
+  "owner": {
+    "name": "nandyalu"
+  },
+  "plugins": [
+    {
+      "name": "kit",
+      "source": "./",
+      "description": "The handoff skill, the session usage hook and the context nudge hook for long Claude Code sessions."
+    }
+  ]
+}

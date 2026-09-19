@@ -1,0 +1,52 @@
+# Builds the VS Code extension and puts it on a GitHub release.
+#
+# On a v* tag: vscode/ is packaged as claude-usage-bar.vsix and attached to the
+# release for that tag. The plugin part of the kit needs no build, because
+# Claude Code reads it from the repository. README.md, under "Install", says
+# how a machine installs both parts.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  # So a failed build can run again on the same tag, without a new tag.
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # The tag names the release, plugin.json names the plugin version and
+      # package.json names the extension version. All three must agree, or a
+      # 1.0.0 extension sits on a v1.0.1 release.
+      - name: Check that the tag matches the two version fields
+        run: |
+          plugin="$(python3 -c 'import json; print(json.load(open(".claude-plugin/plugin.json"))["version"])')"
+          extension="$(python3 -c 'import json; print(json.load(open("vscode/package.json"))["version"])')"
+          for version in "$plugin" "$extension"; do
+            if [ "v${version}" != "${GITHUB_REF_NAME}" ]; then
+              echo "plugin.json says ${plugin}, package.json says ${extension}, the tag says ${GITHUB_REF_NAME}"
+              exit 1
+            fi
+          done
+
+      - name: Package the extension
+        working-directory: vscode
+        run: npx --yes @vscode/vsce package --skip-license -o ../claude-usage-bar.vsix
+
+      # A second run on the same tag replaces the file on the existing release.
+      - name: Put the extension on the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" claude-usage-bar.vsix --title "$GITHUB_REF_NAME" --generate-notes \
+            || gh release upload "$GITHUB_REF_NAME" claude-usage-bar.vsix --clobber
