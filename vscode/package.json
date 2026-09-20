@@ -2,7 +2,7 @@
   "name": "claude-usage-bar",
   "displayName": "Claude usage bar",
   "description": "Shows the token, prompt cache, cost and graft figures of the live Claude Code sessions on this machine in the status bar, with a details pane for all of them.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "publisher": "local",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",

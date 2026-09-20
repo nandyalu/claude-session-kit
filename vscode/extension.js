@@ -159,13 +159,20 @@ function loadSessions(now) {
   return sessions.sort((a, b) => Number(b.inWindow) - Number(a.inWindow) || b.mtime - a.mtime);
 }
 
+// The state of the prompt cache, in the bar and in the hover: a flame with the minutes left, or cold.
+function warmth(s) {
+  return s.warm ? `$(flame) ${s.warmMinutes}m` : '$(circle-slash) cold';
+}
+
+// Each figure follows an icon, not a word. The hover's table headers carry the same icons.
+// graft's figure follows the seedling graft prints itself, which needs no icon font.
 function barText(s, total) {
   const parts = [`$(pulse) ${tokens(s.context)}`];
-  if (s.lastHit != null) parts.push(`cache ${percent(s.lastHit)}`);
-  parts.push(s.warm ? `warm ${s.warmMinutes}m` : 'cold');
-  if (s.graftSaved) parts.push(`graft ${tokens(s.graftSaved)}`);
+  if (s.lastHit != null) parts.push(`$(database) ${percent(s.lastHit)}`);
+  parts.push(warmth(s));
+  if (s.graftSaved) parts.push(`🌱 ${tokens(s.graftSaved)}`);
   if (s.costMicros != null) parts.push(dollars(s.costMicros));
-  if (total > 1) parts.push(`${total} sessions`);
+  if (total > 1) parts.push(`$(multiple-windows) ${total}`);
   return parts.join(' · ');
 }
 
@@ -174,16 +181,16 @@ function hover(sessions) {
     `${i === 0 ? '$(pulse) ' : ''}${s.short} · ${s.inWindow ? `**${s.folder}**` : s.folder}`,
     tokens(s.context),
     percent(s.lastHit) ?? 'no data',
-    s.warm ? `warm ${s.warmMinutes}m` : 'cold',
+    warmth(s),
     s.graftSaved ? tokens(s.graftSaved) : 'none',
     dollars(s.costMicros) ?? 'no data',
     s.updatedAgo,
   ]);
   const overWarn = sessions[0].context >= lines().warn;
   const md = new vscode.MarkdownString([
-    `**Claude sessions** · ${sessions.length} live`,
+    `$(multiple-windows) **Claude sessions** · ${sessions.length} live`,
     '',
-    '| Session | Context | Cache | State | graft saved | Input cost | Updated |',
+    '| Session | Context | $(database) Cache | $(flame) State | 🌱 graft saved | Input cost | Updated |',
     '|---|---:|---:|---|---:|---:|---|',
     ...rows.map((cells) => `| ${cells.join(' | ')} |`),
     '',
